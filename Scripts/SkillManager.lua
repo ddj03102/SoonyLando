@@ -271,7 +271,7 @@ function skp(Q, p_m_but, lv, real_text, j, RRT)
 		if lv[j].text == 'max' then return end
 		p_m_but[1].onClick.Add(function()
 			if tonumber(lv[j].text) >= max_level[1][num] then
-				Client.FireEvent("SendCenterLabel", "이미 최대레벨입니다.")
+				Client.ShowCenterLabel("이미 최대레벨입니다.")
 			else
 				if tonumber(real_text.text) >= max_level[2][num] then
 					local dumy = {}
@@ -284,7 +284,7 @@ function skp(Q, p_m_but, lv, real_text, j, RRT)
 						if lv[p].text == 'max' or tonumber(lv[p].text) >= max_level[3][2][num] then
 							
 						else
-							Client.FireEvent("SendCenterLabel", "선행스킬이 부족합니다.")
+							Client.ShowCenterLabel("선행스킬이 부족합니다.")
 							return
 						end
 					end
@@ -292,7 +292,7 @@ function skp(Q, p_m_but, lv, real_text, j, RRT)
 					real_text.text = tonumber(real_text.text) - max_level[2][num]
 					skp_t.text = "<color=#FFFF00><size='16'>Lv."..lv[j].text.." "..name.."</size></color>\n"..global_S_T[name] 
 				else
-					Client.FireEvent("SendCenterLabel", "스킬포인트가 부족합니다.")
+					Client.ShowCenterLabel("스킬포인트가 부족합니다.")
 				end
 			end
 		end)
@@ -351,7 +351,7 @@ function skp(Q, p_m_but, lv, real_text, j, RRT)
 	if lv[j].text == 'max' then return end
 	p_m_but[1].onClick.Add(function()
 		if tonumber(lv[j].text) >= max_level[1][num] then
-			Client.FireEvent("SendCenterLabel", "이미 최대레벨입니다.")
+			Client.ShowCenterLabel("이미 최대레벨입니다.")
 		else
 			if tonumber(real_text.text) >= max_level[2][num] then
 				local dumy = {}
@@ -364,7 +364,7 @@ function skp(Q, p_m_but, lv, real_text, j, RRT)
 					if lv[p].text == 'max' or tonumber(lv[p].text) >= max_level[3][2][num] then
 						
 					else
-						Client.FireEvent("SendCenterLabel", "선행스킬이 부족합니다.")
+						Client.ShowCenterLabel("선행스킬이 부족합니다.")
 						return
 					end
 				end
@@ -372,7 +372,7 @@ function skp(Q, p_m_but, lv, real_text, j, RRT)
 				real_text.text = tonumber(real_text.text) - max_level[2][num]
 				skp_t.text = "<color=#FFFF00><size='16'>Lv."..lv[j].text.." "..name.."</size></color>\n"..global_S_T[name] 
 			else
-				Client.FireEvent("SendCenterLabel", "스킬포인트가 부족합니다.")
+				Client.ShowCenterLabel("스킬포인트가 부족합니다.")
 			end
 		end
 	end)

@@ -138,7 +138,7 @@ function stat_Window(Table)
 							for i=1, 6 do
 								Buttons[i].color = Classic_COLOR
 							end
-							stat_icon.image = "Pictures/Stat.png"
+							-- stat_icon.image = "Pictures/Stat.png"
 						end
 						Buttons[12].color = Light_Blue_COLOR
 					end
@@ -260,9 +260,9 @@ function stat_Window(Table)
 				local D_Stat = {}
 				Client.FireEvent("dice_sound", "dice_decision.ogg")
 				if Buttons[11].text == 'Eng' then
-					Client.FireEvent("SendCenterLabel", "능력치가 결정되었습니다.")
+					Client.ShowCenterLabel("능력치가 결정되었습니다.")
 				else
-					Client.FireEvent("SendCenterLabel", "Stat has been determined.")
+					Client.ShowCenterLabel("Stat has been determined.")
 				end
 				Buttons[12].color = Classic_COLOR
 				for i=1, 6 do
@@ -276,7 +276,7 @@ function stat_Window(Table)
 						D_Stat[i] = 0
 					end
 				end
-				stat_icon.image = "Pictures/Stat.png"
+				-- stat_icon.image = "Pictures/Stat.png"
 				Client.FireEvent("D_Stat", Utility.JSONSerialize(D_Stat))
 			end
 		end)

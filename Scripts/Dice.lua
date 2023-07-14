@@ -13,16 +13,18 @@ function Dice.Open()
 
 	local W = Client.width
 	local H = Client.height
-	dice_panel = Panel()
 
-	local Garo = 550
-	local Sero = 330
-	dice_panel.rect = Rect(W / 2 - Garo / 2, H / 2 - Sero / 2, Garo, Sero)
-	dice_panel.color = Color(40, 40, 40, 255)
+	local mainWidth = 550
+	local mainHeight = 330
+
+	PanelDice = Image("Pictures/panel_beigeLight.png"){
+		rect = Rect(W / 2 - mainWidth / 2, H / 2 - mainHeight / 2, mainWidth, mainHeight),
+		imageType = 1
+	}
 
 	dice_play = Panel()
 	dice_play.rect = Rect(30, 20, 225, 225)
-	dice_play.color = Color(63, 63, 63, 255)
+	dice_play.color = Color(63, 63, 63, 0)
 
 	dice_textbox = Button("", Rect(50, 265, 185, 45))
 	dice_textbox.color = Color(63, 63, 63, 255)
@@ -57,9 +59,9 @@ function Dice.Close()
 	if Dice.realSum <= 42 and Dice.realSum >= 37 then
 		Client.ShowYesNoAlert("능력치를 결정하시겠습니까?", function(a)
 			if a == 1 then
-				dice_panel.DOScale(Point(0, 0), 0.2)
+				PanelDice.DOScale(Point(0, 0), 0.2)
 				Client.RunLater(function()
-					dice_panel.Destroy()
+					PanelDice.Destroy()
 				end, 0.2)
 				Dice.isOpen = false
 				Client.FireEvent("dice_stat", Dice.realStat[1], Dice.realStat[2], Dice.realStat[3], Dice.realStat[4],
@@ -74,10 +76,6 @@ end
 
 function Dice.Rolling()
 	Client.FireEvent("dice_sound", "dice_play.ogg")
-	dice_panel.DOScale(Point(1.01, 1.01), 0.1)
-	Client.RunLater(function()
-		dice_panel.DOScale(Point(1, 1), 0.1)
-	end, 0.2)
 
 	local stat = { 3, 3, 3, 3, 3, 3 }
 	local bonus = math.random(37 - 18, 42 - 18)
@@ -188,7 +186,7 @@ function Dice.Rolling()
 end
 
 function Dice.Initialize()
-	local calculatedWidth = dice_panel.width / 2 + 55
+	local calculatedWidth = PanelDice.width / 2 + 55
 	DT01 = Panel()
 	DT02 = Panel()
 	DT03 = Panel()
@@ -256,24 +254,24 @@ function Dice.Initialize()
 	DT05.AddChild(SText05)
 	DT06.AddChild(SText06)
 	DT07.AddChild(SText07)
-	dice_panel.AddChild(statText1)
-	dice_panel.AddChild(statText2)
-	dice_panel.AddChild(statText3)
-	dice_panel.AddChild(statText4)
-	dice_panel.AddChild(statText5)
-	dice_panel.AddChild(statText6)
-	dice_panel.AddChild(statText7)
-	dice_panel.AddChild(SText08)
-	dice_panel.AddChild(DT01)
-	dice_panel.AddChild(DT02)
-	dice_panel.AddChild(DT03)
-	dice_panel.AddChild(DT04)
-	dice_panel.AddChild(DT05)
-	dice_panel.AddChild(DT06)
-	dice_panel.AddChild(DT07)
+	PanelDice.AddChild(statText1)
+	PanelDice.AddChild(statText2)
+	PanelDice.AddChild(statText3)
+	PanelDice.AddChild(statText4)
+	PanelDice.AddChild(statText5)
+	PanelDice.AddChild(statText6)
+	PanelDice.AddChild(statText7)
+	PanelDice.AddChild(SText08)
+	PanelDice.AddChild(DT01)
+	PanelDice.AddChild(DT02)
+	PanelDice.AddChild(DT03)
+	PanelDice.AddChild(DT04)
+	PanelDice.AddChild(DT05)
+	PanelDice.AddChild(DT06)
+	PanelDice.AddChild(DT07)
 	dice_play.AddChild(dice_img)
-	dice_panel.AddChild(dice_play)
-	dice_panel.AddChild(dice_Decision)
-	dice_panel.AddChild(dice_textbox)
-	dice_panel.showOnTop = true
+	PanelDice.AddChild(dice_play)
+	PanelDice.AddChild(dice_Decision)
+	PanelDice.AddChild(dice_textbox)
+	PanelDice.showOnTop = true
 end

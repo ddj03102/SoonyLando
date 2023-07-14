@@ -1,115 +1,110 @@
-function Announcement()
+---@diagnostic disable: missing-parameter, param-type-mismatch
+Notice = {}
+
+function Notice.Show()
 	local Garo = 450
 	local Sero = 330
 	local cw = Client.width
 	local ch = Client.height
-	
-	if Notice_Panel then return end
-	
-	Notice_Panel = Panel()
-	Notice_Panel.rect = Rect(cw/2-Garo/2, ch/2-Sero/2, Garo, Sero)
-	Notice_Panel.color = Color(64, 64, 64, 255)
-	Notice_Panel.showOnTop = true
-	
-	local Notice_Panel_2 = Panel()
-	Notice_Panel_2.rect = Rect(0, 0, Garo-24, Sero*3.3)
-	Notice_Panel_2.color = Color(43, 43, 43, 255)
+
+	if PanelNotice then return end
+
+	PanelNotice = Image("Pictures/panel_beige.png") {
+		rect = Rect(cw / 2 - Garo / 2, ch / 2 - Sero / 2, Garo, Sero),
+		showOnTop = true,
+		sliceBorder = RectOff(40, 40, 40, 40),
+		imageType = 1
+	}
+
+	local PanelInner = Panel() {
+		rect = Rect(0, 0, Garo - 24, Sero * 3.3),
+		color = Color(43, 43, 43, 0)
+	}
 	--Notice_Panel.AddChild(Notice_Panel_2)
-	
-	local Close_Button = Button('✖', Rect(Garo+6, 0, 40, 40))
+
+	local closeButton = Button() {
+		rect = Rect(Garo + 6, 0, 40, 40),
+		text = '✖',
+		textAlign = 4,
+		textSize = 26,
+		sliceBorder = RectOff(40, 40, 40, 40),
+	}
 	--Close_Button.textAlign = 0
-	Close_Button.textSize = 26
-	Close_Button.color = Color(64, 64, 64, 255)
-	Notice_Panel.AddChild(Close_Button)
-	
-	Close_Button.onClick.Add(function()
+	closeButton.SetImage("Pictures/panel_brown.png")
+	PanelNotice.AddChild(closeButton)
+
+	closeButton.onClick.Add(function()
 		if agree == 1 then
-			Notice_Panel.DOScale(Point(0.01, 0.01), 0.2)
-			Notice_Panel.DOMove(Point(TopMenu.mainPanel.x+TopMenu.mainPanel.width-43*4+20, TopMenu.mainPanel.y+20), 0.2)
+			PanelNotice.DOScale(Point(0.01, 0.01), 0.2)
+			PanelNotice.DOMove(Point(TopMenu.mainPanel.x + TopMenu.mainPanel.width - 43 * 4 + 20, TopMenu.mainPanel.y +
+				20), 0.2)
 			Client.RunLater(function()
-				Notice_Panel.Destroy()
-				Notice_Panel = nil
+				Notice.Hide()
 			end, 0.2)
 		else
-			Client.FireEvent("SendCenterLabel", 
-			'<color=#FFFF00>스크롤을 아래로 내려서 동의해주세요.</color>')
+			Client.ShowCenterLabel(
+				'<color=#FFFF00>스크롤을 아래로 내려서 동의해주세요.</color>')
 		end
 	end)
-	
-	local scroll_panel = ScrollPanel()
-	scroll_panel.rect = Rect(12, 40, Garo-24, Sero-52)
 
-	scroll_panel.AddChild(Notice_Panel_2)
-	scroll_panel.content = Notice_Panel_2
-	scroll_panel.horizontal = false
-	scroll_panel.showVerticalScrollbar = false
-	Notice_Panel.AddChild(scroll_panel)
-	
+	local scroll_panel = ScrollPanel(){
+		rect = Rect(12, 40, Garo - 24, Sero - 52),
+		content = PanelInner,
+		opacity = 0,
+		horizontal = false,
+		showVerticalScrollbar = false
+	}
+	scroll_panel.AddChild(PanelInner)
+	PanelNotice.AddChild(scroll_panel)
+
 	local Notice_Button = {}
 	local Notice_Image = {}
 	local Notice_Text = {}
 	local In_text = {}
 	local Last_Button = {}
-	for i=1, 3 do
-		Notice_Button[i] = Button(nil, Rect(Notice_Panel.width/3*(i-1), 0, Notice_Panel.width/3, 39))
-		Notice_Image[i] = Image('Pictures/패널쓰2.png', Rect(0, 0, Notice_Button[i].width, Notice_Button[i].height))
-		Notice_Image[i].SetOpacity(100)
-		Notice_Button[i].color = Color(64, 64, 64, 255)
-		Notice_Text[i] = Text(nil, Rect(0, 0, Notice_Button[i].width, Notice_Button[i].height))
-		Notice_Text[i].textSize = 23
+	for i = 1, 3 do
+		Notice_Button[i] = Button(){
+			text = nil,
+			rect = Rect(PanelNotice.width / 3 * (i - 1), 0, PanelNotice.width / 3, 39),
+			imageType = 1,
+		}
+		Notice_Button[i].SetImage("Pictures/panel_brown.png")
+		Notice_Image[i] = Image('', Rect(0, 0, Notice_Button[i].width, Notice_Button[i].height))
+		Notice_Image[i].SetOpacity(0)
+		Notice_Text[i] = CustomText(nil, Rect(0, 0, Notice_Button[i].width, Notice_Button[i].height))
+		Notice_Text[i].lineSpacing = 0.8
+		Notice_Text[i].textSize = 17
 		Notice_Text[i].textAlign = 4
-		
+		Notice_Text[i].shadow.visible = true
+
 		Notice_Image[i].AddChild(Notice_Text[i])
 		Notice_Button[i].AddChild(Notice_Image[i])
-		Notice_Panel.AddChild(Notice_Button[i])
-		
+		PanelNotice.AddChild(Notice_Button[i])
+
 		Notice_Button[i].onClick.Add(function()
-			Notice_Button[i].color = Color(160, 220, 235, 255)
-			local bagic_color = Color(64, 64, 64, 255)
-			if i==1 then
-				Notice_Panel_2.height = Sero*3.3
-				Notice_Button[i+1].color = bagic_color
-				Notice_Button[i+2].color = bagic_color
-				In_text[1].visible = true
-				In_text[2].visible = false
-				In_text[3].visible = false
-				Last_Button[1].visible = true
-				Last_Button[2].visible = true
-			elseif i==2 then
-				Notice_Panel_2.height = Sero-50
-				Notice_Button[i-1].color = bagic_color
-				Notice_Button[i+1].color = bagic_color
-				In_text[1].visible = false
-				In_text[2].visible = true
-				In_text[3].visible = false
-				Last_Button[1].visible = false
-				Last_Button[2].visible = false
-			else
-				Notice_Panel_2.height = Sero-50
-				Notice_Button[i-1].color = bagic_color
-				Notice_Button[i-2].color = bagic_color
-				In_text[1].visible = false
-				In_text[2].visible = false
-				In_text[3].visible = true
-				Last_Button[1].visible = false
-				Last_Button[2].visible = false
+			PanelInner.height = i == 1 and Sero * 3.3 or Sero - 50
+			for k, v in pairs(In_text) do
+				v.visible = k == i and true or false
 			end
+			Last_Button[1].visible = i == 1 and true or false
+			Last_Button[2].visible = i == 1 and true or false
 		end)
 	end
-	Notice_Button[1].color = Color(160, 220, 235, 255)
-	Notice_Text[1].text = '운영규칙'
-	Notice_Text[2].text = '이벤트'
-	Notice_Text[3].text = '공지사항'
-	
-	for i=1, 3 do
-		In_text[i] = Text(nil, Rect(0, 0, Notice_Panel_2.width, Notice_Panel_2.height))
+	Notice_Text[1].text = '★운영규칙★'
+	Notice_Text[2].text = '★이벤트★'
+	Notice_Text[3].text = '★공지사항★'
+
+	for i = 1, 3 do
+		In_text[i] = CustomText(nil, Rect(0, 0, PanelInner.width, PanelInner.height))
+		In_text[i].lineSpacing = 0.8
 		In_text[i].textAlign = 0
 		In_text[i].textSize = 15
+		In_text[i].shadow.visible = true
 		In_text[i].color = Color(244, 244, 244, 255)
-		Notice_Panel_2.AddChild(In_text[i])
+		PanelInner.AddChild(In_text[i])
 	end
-	
-	In_text[1].text = 
+
+	In_text[1].text =
 	[[
 							<color=#FFFF00><size='26'>수니랜드 운영규칙</size></color>
 			
@@ -180,54 +175,81 @@ function Announcement()
 	룰루랄라]]
 	In_text[2].visible = false
 	In_text[3].visible = false
-	
-	Last_Button[1] = Button('동의한다.', Rect(20, Notice_Panel_2.height-60, 80, 40))
-	Last_Button[2] = Button('동의못해', Rect(160, Notice_Panel_2.height-60, 80, 40))
+
+	Last_Button[1] = Button('동의한다', Rect(20, PanelInner.height - 60, 80, 40))
+	Last_Button[2] = Button('거절한다', Rect(160, PanelInner.height - 60, 80, 40))
 	----------------------------------------------------------------------------------------
 	----------------------------------------------------------------------------------------
-	for i=1, 2 do
-		Last_Button[i].color = Color(111, 111, 111, 255)
-		Notice_Panel_2.AddChild(Last_Button[i])
+	for i = 1, 2 do
+		Last_Button[i].SetImage("Pictures/panel_brown.png")
+		Last_Button[i].color = i == 1 and Color.green or Color.red
+		PanelInner.AddChild(Last_Button[i])
 		Last_Button[i].textAlign = 4
-		Last_Button[i].textSize = 18
+		Last_Button[i].textSize = 14
+		Last_Button[i].font = Font(Constants.FONTS.NotoSansKR)
 	end
-	
+
 	Last_Button[1].onClick.Add(function()
-		Notice_Panel.Destroy()
-		Notice_Panel = nil
-		local ran = math.random(1, 11)
-		local txt = '당신이 최고야'
-		if ran == 1 then txt = '고마워요.'
-		elseif ran == 2 then txt = '행복하게 만들어줄게요.'
-		elseif ran == 3 then txt = '나도 동의한다.'
-		elseif ran == 4 then txt = '항상 감사해요.'
-		elseif ran == 5 then txt = '즐겨주셔서 고마워요.'
-		elseif ran == 6 then txt = '건강하세요.'
-		elseif ran == 7 then txt = '행복하세요.'
-		elseif ran == 8 then txt = '하하하하하하' Client.FireEvent("dice_sound", "으하하하하(저).ogg")
-		elseif ran == 9 then txt = '힘내세요!'
-		elseif ran == 10 then txt = '긍정에너지를 드릴게요!'
-		end
-		txt = "<color=#BFFF00><size='25'>"..txt.."</size></color>"
-		Client.FireEvent("SendCenterLabel", txt)
-		Client.FireEvent("변수", 25, 1)
+		Notice.OnAgree()
 	end)
-	
+
 	Last_Button[2].onClick.Add(function()
-		local ran = math.random(1, 11)
-		local txt = '제발 동의해줘'
-		if ran == 1 then txt = '동의해주면 안잡아먹지'
-		elseif ran == 2 then txt = '동의보감'
-		elseif ran == 3 then txt = '동의하면 잘해줄게요.'
-		elseif ran == 4 then txt = '장난치는거죠?'
-		elseif ran == 5 then txt = '동의하면 당신의 외모가 +3 상승합니다.'
-		elseif ran == 6 then txt = '동의 못하면 100원을 잃어버릴 겁니다.'
-		elseif ran == 7 then txt = '저희 엄마도 동의하길 바랄 거에요.'
-		elseif ran == 8 then txt = 'ㅋㅋㅋㅋ' Client.FireEvent("dice_sound", "ㅋㅋㅋㅋㅎ.ogg")
-		elseif ran == 9 then txt = '당신은 할 수 있어요!'
-		elseif ran == 10 then txt = '동의를 해주세요.'
-		end
-		txt = "<size='25'>"..txt.."</size>"
-		Client.FireEvent("SendCenterLabel", txt)
+		Notice.OnDisagree()
 	end)
+end
+
+function Notice.Hide()
+	PanelNotice.Destroy()
+	PanelNotice = nil
+end
+
+function Notice.OnAgree()
+	Notice.Hide()
+	local messages = {
+		"고마워요.",
+		"행복하게 만들어줄게요.",
+		"나도 동의한다.",
+		"항상 감사해요.",
+		"즐겨주셔서 고마워요.",
+		"건강하세요.",
+		"행복하세요.",
+		"하하하하하하",
+		"힘내세요!",
+		"긍정에너지를 드릴게요!"
+	}
+
+	local ran = math.random(1, #messages + 1)
+	local txt = messages[ran] or '당신이 최고야'
+	txt = "<color=#BFFF00><size='25'>" .. txt .. "</size></color>"
+
+	if ran == 8 then
+		Client.FireEvent("dice_sound", "으하하하하(저).ogg")
+	end
+	Client.ShowCenterLabel(txt)
+	SetVar(25, 1)
+end
+
+function Notice.OnDisagree()
+	local messages = {
+		"동의해주면 안잡아먹지",
+		"동의보감",
+		"동의하면 잘해줄게요.",
+		"장난치는거죠?",
+		"동의하면 당신의 외모가 +3 상승합니다.",
+		"동의 못하면 100원을 잃어버릴 겁니다.",
+		"저희 엄마도 동의하길 바랄 거에요.",
+		"ㅋㅋㅋㅋ",
+		"당신은 할 수 있어요!",
+		"동의를 해주세요."
+	}
+
+	local ran = math.random(1, #messages + 1)
+	local txt = messages[ran] or '제발 동의해줘'
+	txt = "<size='25'>" .. txt .. "</size>"
+
+	if ran == 8 then
+		Client.FireEvent("dice_sound", "ㅋㅋㅋㅋㅎ.ogg")
+	end
+
+	Client.ShowCenterLabel(txt)
 end

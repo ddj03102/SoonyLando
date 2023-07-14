@@ -1,71 +1,115 @@
-function Loudspeaker()
-	local cw = Client.width
-	local ch = Client.height
-	local Garo = 185
-	local Sero = 80
-	if Input_Panel then 
-		Input_Panel.rect = Rect(558, 68, Garo, Sero)
-		return 
+---@diagnostic disable: param-type-mismatch, lowercase-global
+function ShowLoudspeakerPanel()
+	Client.ShowBag(false)
+
+	local panelWidth = 185
+	local panelHeight = 80
+
+	if loudspeakerPanel then
+		loudspeakerPanel.rect = Rect(558, 68, panelWidth, panelHeight)
+		return
 	end
-	
-	Input_Panel = ScrollPanel(Rect(558, 68, Garo, Sero))
-	Input_Panel.content = Input_Panel
-	Input_Panel.color = Color(100, 100, 100, 100)
-	Input_Panel.showOnTop = true
-	
-	local Input_speaker = InputField(Rect(0, 50, Garo, Sero-50))
-	Input_speaker.placeholder = '확성 내용을 입력하세요.'
-	Input_speaker.textSize = 14
-	Input_speaker.textAlign = 3
-	Input_Panel.AddChild(Input_speaker)
-	
-	local Input_but = {}
-	for i=1, 3 do
-		Input_but[i] = Button('', Rect(5+60*(i-1), 5, 55, 40))
-		Input_but[i].color = Color(0, 0, 0, 60)
-		Input_but[i].text = (i==1 and '보내기') or (i==2 and '삭제') or (i==3 and '취소')
-		Input_Panel.AddChild(Input_but[i])
-	end
-	
-	Input_but[1].onClick.Add(function()
-		Client.FireEvent('Loudspeaker', Input_speaker.text)
+
+	loudspeakerPanel = Panel(Rect(558, 68, panelWidth, panelHeight))
+	loudspeakerPanel.color = Color(100, 100, 100, 0)
+	loudspeakerPanel.showOnTop = true
+
+	local panelBackground = Image("Pictures/panel_beige.png") {
+		rect = Rect(0, 0, loudspeakerPanel.width, loudspeakerPanel.height),
+		imageType = 1
+	}
+	loudspeakerPanel.AddChild(panelBackground)
+
+	local inputField = InputField(Rect(10, 10, panelWidth - 20, 30))
+	inputField.placeholder = '확성 내용을 입력하세요.'
+	inputField.textSize = 14
+	inputField.textAlign = 3
+	loudspeakerPanel.AddChild(inputField)
+
+	local sendButton = Button('보내기', Rect(5, 50, 55, 40))
+	sendButton.SetImage("Pictures/panel_brown.png")
+	sendButton.color = Color.green
+	loudspeakerPanel.AddChild(sendButton)
+
+	local deleteButton = Button('삭제', Rect(65, 50, 55, 40))
+	deleteButton.SetImage("Pictures/panel_brown.png")
+	deleteButton.color = Color.black
+	loudspeakerPanel.AddChild(deleteButton)
+
+	local cancelButton = Button('취소', Rect(125, 50, 55, 40))
+	cancelButton.SetImage("Pictures/panel_brown.png")
+	cancelButton.color = Color.red
+	loudspeakerPanel.AddChild(cancelButton)
+
+	sendButton.onClick.Add(function()
+		if inputField.text == string.empty then
+			return
+		end
+		Client.FireEvent('Loudspeaker', inputField.text)
 	end)
-	
-	Input_but[2].onClick.Add(function()
-		Input_speaker.text = ''
+
+	deleteButton.onClick.Add(function()
+		inputField.text = ''
 	end)
-	
-	Input_but[3].onClick.Add(function()
-		Input_Panel.Destroy()
-		Input_Panel = nil
+
+	cancelButton.onClick.Add(function()
+		loudspeakerPanel.Destroy()
+		loudspeakerPanel = nil
 	end)
+
+	Draggable.AddItem(loudspeakerPanel)
 end
 
-Client.GetTopic("Loudspeaker").Add(function(text, text2)
-	if speaker_Panel then return end
-	local Garo = 400
-	speaker_Panel = ScrollPanel(Rect(Client.width/2-Garo/2, 35, Garo, 90))
-	speaker_Panel.content = speaker_Panel
-	speaker_Panel.color = Color(0, 0, 0, 0)
-	speaker_Panel.showOnTop = true
-	
-	speaker_image = Image('Pictures/확성기.png', Rect(0, 0, speaker_Panel.width, speaker_Panel.height))
-	speaker_Panel.AddChild(speaker_image)
-	
-	speaker_text2 = Text('['..text2..']', Rect(70, 0, speaker_Panel.width-140, 30))
-	speaker_text2.textSize = 14
-	speaker_text2.textAlign = 4
-	speaker_Panel.AddChild(speaker_text2)
-	
-	speaker_text = Text(text, Rect(70, 22, speaker_Panel.width-140, speaker_Panel.height-22))
-	speaker_text.textSize = 17
-	speaker_text.textAlign = 4
-	speaker_Panel.AddChild(speaker_text)
-	
+function ShowLoudspeakerMessage(message, owner)
+	if loudspeakerMessagePanel then
+		return
+	end
+
+	local panelWidth = 400
+	loudspeakerMessagePanel = Panel() {
+		rect = Rect(0, 35 + 45, panelWidth, 90),
+		pivot = Point(0.5, 0.5), anchor = 1,
+		-- content = loudspeakerMessagePanel,
+		color = Color(0, 0, 0, 0),
+		showOnTop = true,
+		scaleX = 0, scaleY = 0
+	}
+
+	local speakerImage = Image('Pictures/확성기.png',
+		Rect(0, 0, loudspeakerMessagePanel.width, loudspeakerMessagePanel.height))
+	loudspeakerMessagePanel.AddChild(speakerImage)
+
+	local speakerOwnerText = Text() {
+		text = '[' .. owner .. ']',
+		rect = Rect(70, 0, loudspeakerMessagePanel.width - 140, 30),
+		textSize = 14,
+		textAlign = 4
+	}
+	speakerOwnerText.shadow.visible = true
+	loudspeakerMessagePanel.AddChild(speakerOwnerText)
+
+	local speakerMessageText = Text() {
+		text = message,
+		rect = Rect(70, 22, loudspeakerMessagePanel.width - 140, loudspeakerMessagePanel.height - 22),
+		textSize = 17,
+		textAlign = 4
+	}
+	speakerMessageText.shadow.visible = true
+	loudspeakerMessagePanel.AddChild(speakerMessageText)
+
+
 	Client.RunLater(function()
-		speaker_Panel.Destroy()
-		speaker_Panel = nil
+		loudspeakerMessagePanel.Destroy()
+		loudspeakerMessagePanel = nil
 	end, 9.9)
-	
-	speaker_Panel.SetOrderIndex(1)
-end)
+
+	speakerMessageText.DOColor(Color.yellow, 0.1).SetLoops(90,1)
+
+	loudspeakerMessagePanel.SetOrderIndex(1)
+	loudspeakerMessagePanel.DOScale(Point(1, 1), 0.5).SetEase(30).OnComplete(function ()
+		loudspeakerMessagePanel.DOScale(Point(1.05,1.05),0.5).SetLoops(16,1).OnComplete(function ()
+			loudspeakerMessagePanel.DOScale(Point(0, 0), 0.4)
+		end)
+	end)
+end
+Client.GetTopic("Loudspeaker").Add(ShowLoudspeakerMessage)

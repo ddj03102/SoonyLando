@@ -619,7 +619,7 @@ function sooni_mon(Q, W, E, R, T, Eq)
 	end)
 	
 	key_button[6].onClick.Add(function()--분해
-		Client.FireEvent("SendCenterLabel", "미구현 기능입니다.")
+		Client.ShowCenterLabel("미구현 기능입니다.")
 		--[[
 		Client.ShowYesNoAlert("선택한 아이템을 분해하시곘습니까?", function(a)
 			if a == 1 then

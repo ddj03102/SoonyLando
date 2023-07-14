@@ -95,8 +95,8 @@ function Auto:Show()
         elseif self.style == 1 then
             self.style = self.style + 1
             Client.ShowCenterLabel(
-            "<color=#A4A4A4>[자동사냥]</color> <color=#00FFFF>[제자리]</color> <color=#A4A4A4>[종료]</color>")
-            Client.FireEvent("변수", 26, 2)
+                "<color=#A4A4A4>[자동사냥]</color> <color=#00FFFF>[제자리]</color> <color=#A4A4A4>[종료]</color>")
+            SetVar(26, 2)
             return
         elseif self.style == 2 then
             self.style = 0
@@ -107,11 +107,11 @@ function Auto:Show()
         Client.myPlayerUnit.StopMove()
         if o.mode then
             Client.ShowCenterLabel(
-            "<color=#00FFFF>[자동사냥]</color> <color=#A4A4A4>[제자리]</color> <color=#A4A4A4>[종료]</color>")
+                "<color=#00FFFF>[자동사냥]</color> <color=#A4A4A4>[제자리]</color> <color=#A4A4A4>[종료]</color>")
             SetVar(26, 1)
         else
             Client.ShowCenterLabel(
-            "<color=#A4A4A4>[자동사냥]</color> <color=#A4A4A4>[제자리]</color> <color=#00FFFF>[종료]</color>")
+                "<color=#A4A4A4>[자동사냥]</color> <color=#A4A4A4>[제자리]</color> <color=#00FFFF>[종료]</color>")
             SetVar(26, 0)
         end
     end)
