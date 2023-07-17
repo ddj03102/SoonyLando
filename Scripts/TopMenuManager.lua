@@ -153,6 +153,15 @@ TopMenu.list[6] = {
 	end
 }
 
+TopMenu.list[7] = {
+	icon = "Pictures/Buff_30002.png",
+	name = "파티",
+	runLater = 0.5,
+	closure = function()
+		Client.ShowParty(true)
+	end
+}
+
 
 function TopMenu.OpenMenu()
 	local cw = Client.width

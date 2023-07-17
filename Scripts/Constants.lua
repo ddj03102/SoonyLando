@@ -7,9 +7,9 @@ Constants.IMAGES = {
 }
 
 Constants.FONTS = {
-    NotoSansKR = "NotoSansCJKkr-Medium",
-    NanumGothic = "NanumGothic",
-    NanumMyeongjo = "NanumMyeongjo",
+    NotoSansKR = Font("NotoSansCJKkr-Medium"),
+    NanumGothic = Font("NanumGothic"),
+    NanumMyeongjo = Font("NanumMyeongjo"),
 }
 
 function SetVar(num, variable)
@@ -20,7 +20,7 @@ function CustomText(text, rect)
     return Text() {
         text = text or "",
         rect = rect or Rect(0,0,0,0),
-        font = Font(Constants.FONTS.NotoSansKR)
+        font = Constants.FONTS.NotoSansKR
     }
 end
 
