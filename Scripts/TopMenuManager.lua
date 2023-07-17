@@ -1,4 +1,4 @@
----@diagnostic disable: param-type-mismatch, missing-parameter
+---@diagnostic disable: param-type-mismatch, missing-parameter, undefined-global
 TopMenu = {}
 TopMenu.list = {}
 TopMenu.isWindowOpened = true
@@ -54,17 +54,17 @@ TopMenu.list[1] = {
 	name = "스킬",
 	runLater = 1,
 	closure = function()
-		if Skill_Panel then
-			Skill_Panel.DOScale(Point(0.01, 0.01), 0.2)
-			Skill_Panel.DOMove(Point(TopMenu.mainPanel.x + TopMenu.mainPanel.width - 43 + 20, TopMenu.mainPanel.y + 20),
+		if PanelSkill then
+			PanelSkill.DOScale(Point(0.01, 0.01), 0.2)
+			PanelSkill.DOMove(Point(TopMenu.mainPanel.x + TopMenu.mainPanel.width - 43 + 20, TopMenu.mainPanel.y + 20),
 				0.2)
 			if skp_b then
 				skp_b.Destroy()
 				skp_b = nil
 			end
 			Client.RunLater(function()
-				Skill_Panel.Destroy()
-				Skill_Panel = nil
+				PanelSkill.Destroy()
+				PanelSkill = nil
 			end, 0.2)
 		else
 			Client.FireEvent('skill_Window')
@@ -242,4 +242,4 @@ function TopMenu.HandleRedDot(type)
 end
 
 ScreenUI.bagButtonVisible = false
-ScreenUI.menuButtonVisible = false
+ScreenUI.menuButtonVisible = true

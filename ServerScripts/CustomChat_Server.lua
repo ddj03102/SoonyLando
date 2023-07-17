@@ -40,7 +40,6 @@ local sayFunc = {
             local partyUnit = sayUnit.party.players[i].unit
             partyUnit.FireEvent("AddChat", Utility.JSONSerialize({ name = sayUnit.name, text = text, type = sayType }), true)
         end
-        print(123)
     end
 }
 

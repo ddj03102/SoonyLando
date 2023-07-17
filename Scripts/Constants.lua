@@ -6,6 +6,15 @@ string.empty = ""
 Constants.IMAGES = {
 }
 
+Constants.SAYTYPE ={
+    NEARBY = 0,
+    ALL = 1,
+    WHISPER = 2,
+    WHISPER_TO = 3,
+    CLAN = 5,
+    PARTY = 6,
+}
+
 Constants.FONTS = {
     NotoSansKR = Font("NotoSansCJKkr-Medium"),
     NanumGothic = Font("NanumGothic"),

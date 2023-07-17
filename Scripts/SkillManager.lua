@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-global
 Client.GetTopic("skill_Window").Add(function(Table, Table2)
 	skill_Window(Table, Table2)
 end)
@@ -324,7 +325,7 @@ function skp(Q, p_m_but, lv, real_text, j, RRT)
 		end)
 		return 
 	end
-	skp_b = Button('', Rect(Skill_Panel.x+Skill_Panel.width+20, Skill_Panel.y-15, 240, 400))
+	skp_b = Button('', Rect(PanelSkill.x+PanelSkill.width+20, PanelSkill.y-15, 240, 400))
 	skp_b.color = Color(0, 0, 0, 0)
 	skp_b.showOnTop = true
 	skp_b.onClick.Add(function()
@@ -426,7 +427,7 @@ function has_pay(T, Q, icon_n_but, skill_level, Skill_Image, Skill_Panel_2, p_m_
 end
 
 function skill_Window(Table, Table2)
-	if Skill_Panel then return end
+	if PanelSkill then return end
 	local Q = Utility.JSONParse(Table)
 	local W = Utility.JSONParse(Table2)
 	
@@ -439,46 +440,46 @@ function skill_Window(Table, Table2)
 	{'✪ 스킬트리', '포인트', 'Eng', '결 정', '초기화'}, 
 	{'✪ Skill Streat', 'Point', '한글', 'Decide', 'Dft'}
 	}
-	Skill_Panel = ScrollPanel(Rect(cw/2-Garo/2, ch/2-Sero/2, Garo, Sero))
-	Skill_Panel.content = Skill_Panel
-	Skill_Panel.color = Color(38, 38, 38, 255)
-	Skill_Panel.showOnTop = true
+	PanelSkill = ScrollPanel(Rect(cw/2-Garo/2, ch/2-Sero/2, Garo, Sero))
+	PanelSkill.content = PanelSkill
+	PanelSkill.color = Color(38, 38, 38, 255)
+	PanelSkill.showOnTop = true
 	
-	local Top_Panel = Panel(Rect(0, 0, Skill_Panel.width, 34))
+	local Top_Panel = Panel(Rect(0, 0, PanelSkill.width, 34))
 	Top_Panel.color = Color(56, 56, 56, 255)
-	Skill_Panel.AddChild(Top_Panel)
+	PanelSkill.AddChild(Top_Panel)
 	
-	local Top_Text = Text(Letter[W[2]][1], Rect(5, 0, Skill_Panel.width, 34))
+	local Top_Text = Text(Letter[W[2]][1], Rect(5, 0, PanelSkill.width, 34))
 	Top_Text.textSize = 20
 	Top_Text.textAlign = 3
 	Top_Panel.AddChild(Top_Text)
 	
-	local Close_button = Button("✖", Rect(Skill_Panel.width-34, 0, 34, 34))
+	local Close_button = Button("✖", Rect(PanelSkill.width-34, 0, 34, 34))
 	Close_button.textSize = 24
 	Close_button.textAlign = 4
 	Close_button.color = Color(74, 74, 74, 255)
 	Top_Panel.AddChild(Close_button)
 	Close_button.onClick.Add(function()
-		Skill_Panel.DOScale(Point(0.01, 0.01), 0.2)
-		Skill_Panel.DOMove(Point(TopMenu.mainPanel.x+TopMenu.mainPanel.width-43+20, TopMenu.mainPanel.y+20), 0.2)
+		PanelSkill.DOScale(Point(0.01, 0.01), 0.2)
+		PanelSkill.DOMove(Point(TopMenu.mainPanel.x+TopMenu.mainPanel.width-43+20, TopMenu.mainPanel.y+20), 0.2)
 		if skp_b then skp_b.Destroy() skp_b=nil end
 		Client.RunLater(function()
-			Skill_Panel.Destroy()
-			Skill_Panel = nil
+			PanelSkill.Destroy()
+			PanelSkill = nil
 		end, 0.2)
 	end)
-	local point_txt = Text(Letter[W[2]][2], Rect(4, Skill_Panel.height-36, 44, 32))
+	local point_txt = Text(Letter[W[2]][2], Rect(4, PanelSkill.height-36, 44, 32))
 	point_txt.textSize = 15
 	point_txt.textAlign = 4
 	Top_Panel.AddChild(point_txt)
 	
-	local Point_Panel = Panel(Rect(52, Skill_Panel.height-36, 36, 32))
+	local Point_Panel = Panel(Rect(52, PanelSkill.height-36, 36, 32))
 	Point_Panel.color = Color(64, 64, 64, 255)
 	Top_Panel.AddChild(Point_Panel)
 	
 	local but = {}
 	for i=1, 3 do
-		but[i] = Button(nil, Rect(128+36*(i-1), Skill_Panel.height-36, ((i==1 or i==3) and 32) or 57, 32))
+		but[i] = Button(nil, Rect(128+36*(i-1), PanelSkill.height-36, ((i==1 or i==3) and 32) or 57, 32))
 		but[i].color = Color(87, 87, 87, 255)
 		but[i].text = Letter[W[2]][i+2]
 		Top_Panel.AddChild(but[i])
@@ -554,7 +555,7 @@ function skill_Window(Table, Table2)
 	scroll_panel.rect = Rect(4, menu_but[1].y+menu_but[1].height+4, Garo-8, Sero-114)	
 	scroll_panel.horizontal = false
 	scroll_panel.showVerticalScrollbar = true
-	Skill_Panel.AddChild(scroll_panel)
+	PanelSkill.AddChild(scroll_panel)
 	local Skill_Panel_2 = Panel(Rect(0, 0, Garo-8, Sero-100))
 	Skill_Panel_2.color = Color(22, 22, 22, 255)
 	scroll_panel.AddChild(Skill_Panel_2)
