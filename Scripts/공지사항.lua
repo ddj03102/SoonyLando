@@ -61,7 +61,7 @@ function Notice.Show()
 	local Notice_Image = {}
 	local Notice_Text = {}
 	local In_text = {}
-	local Last_Button = {}
+	local bottomButtons = {}
 	for i = 1, 3 do
 		Notice_Button[i] = Button(){
 			text = nil,
@@ -86,8 +86,8 @@ function Notice.Show()
 			for k, v in pairs(In_text) do
 				v.visible = k == i and true or false
 			end
-			Last_Button[1].visible = i == 1 and true or false
-			Last_Button[2].visible = i == 1 and true or false
+			bottomButtons[1].visible = i == 1 and true or false
+			bottomButtons[2].visible = i == 1 and true or false
 		end)
 	end
 	Notice_Text[1].text = '★운영규칙★'
@@ -176,24 +176,24 @@ function Notice.Show()
 	In_text[2].visible = false
 	In_text[3].visible = false
 
-	Last_Button[1] = Button('동의한다', Rect(20, PanelInner.height - 60, 80, 40))
-	Last_Button[2] = Button('거절한다', Rect(160, PanelInner.height - 60, 80, 40))
+	bottomButtons[1] = Button('동의한다', Rect(20, PanelInner.height - 60, 80, 40))
+	bottomButtons[2] = Button('거절한다', Rect(160, PanelInner.height - 60, 80, 40))
 	----------------------------------------------------------------------------------------
 	----------------------------------------------------------------------------------------
 	for i = 1, 2 do
-		Last_Button[i].SetImage("Pictures/panel_brown.png")
-		Last_Button[i].color = i == 1 and Color.green or Color.red
-		PanelInner.AddChild(Last_Button[i])
-		Last_Button[i].textAlign = 4
-		Last_Button[i].textSize = 14
-		Last_Button[i].font = Font(Constants.FONTS.NotoSansKR)
+		bottomButtons[i].SetImage("Pictures/panel_brown.png")
+		bottomButtons[i].color = i == 1 and Color.green or Color.red
+		PanelInner.AddChild(bottomButtons[i])
+		bottomButtons[i].textAlign = 4
+		bottomButtons[i].textSize = 14
+		bottomButtons[i].font = Font(Constants.FONTS.NotoSansKR)
 	end
 
-	Last_Button[1].onClick.Add(function()
+	bottomButtons[1].onClick.Add(function()
 		Notice.OnAgree()
 	end)
 
-	Last_Button[2].onClick.Add(function()
+	bottomButtons[2].onClick.Add(function()
 		Notice.OnDisagree()
 	end)
 end

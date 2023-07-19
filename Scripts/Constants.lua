@@ -8,11 +8,13 @@ Constants.IMAGES = {
 
 Constants.SAYTYPE ={
     NEARBY = 0,
-    ALL = 1,
+    WORLD = 1,
     WHISPER = 2,
     WHISPER_TO = 3,
-    CLAN = 5,
+    CLAN = 4,
+    CLAN_TO = 5,
     PARTY = 6,
+    SYSTEM = 7,
 }
 
 Constants.FONTS = {

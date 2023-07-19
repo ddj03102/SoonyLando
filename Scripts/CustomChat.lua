@@ -3,24 +3,22 @@ CustomChat = {}
 CustomChat.ChatMessages = {}
 CustomChat.ChatType = {
     {
-        type = Constants.SAYTYPE.NEARBY,
-        name = "근처",
-        color = Color.white
+        name = "ALL",
     },
     {
-        type = Constants.SAYTYPE.ALL,
-        name = "전체",
-        color = Color(160, 225, 255)
+        type = Constants.SAYTYPE.WORLD,
+        name = "월드",
+        color = Color(160, 225, 255),
+    },
+    {
+        type = Constants.SAYTYPE.NEARBY,
+        name = "근처",
+        color = Color.white,
     },
     {
         type = Constants.SAYTYPE.WHISPER,
         name = "귓속말",
         color = Color.magenta
-    },
-    {
-        type = Constants.SAYTYPE.WHISPER_TO,
-        name = "시스템",
-        color = Color(0, 255, 0)
     },
     {
         type = Constants.SAYTYPE.CLAN,
@@ -31,14 +29,21 @@ CustomChat.ChatType = {
         type = Constants.SAYTYPE.PARTY,
         name = "파티",
         color = Color.cyan
-    }
+    },
+    {
+        type = Constants.SAYTYPE.SYSTEM,
+        name = "시스템",
+        color = Color(0, 255, 0)
+    },
 }
 CustomChat.ChatCellHeight = 20
 CustomChat.CurrentIndex = 2
 CustomChat.IndexById = {}
 
 for i, entry in ipairs(CustomChat.ChatType) do
-    CustomChat.IndexById[entry.type] = i
+    if entry.type then
+        CustomChat.IndexById[entry.type] = i
+    end
 end
 
 function CustomChat.CreateChatPanel()
@@ -55,13 +60,14 @@ function CustomChat.CreateChatPanel()
 
     local tab = {}
     local redDot = {}
-    for i = 1, 6 do
+    for i = 1, #CustomChat.ChatType do
         tab[i] = Button() {
             text = nil,
-            rect = Rect(0, 0, mainPanel.width / 6, horizontal.height),
+            rect = Rect(0, 0, mainPanel.width / #CustomChat.ChatType, horizontal.height),
             opacity = 0,
             textAlign = 4,
-            imageType = 1
+            imageType = 1,
+            masked = false
         }
         tab[i].SetImage("Pictures/panel_deepPurple.png")
         tab[i].SetParent(horizontal)
@@ -69,20 +75,26 @@ function CustomChat.CreateChatPanel()
             CustomChat.CurrentIndex = i
             CustomChat.RefreshCell(i)
         end)
-        local redDot = Image("Pictures/A4.png"){
-            rect = Rect(tab[i].width-20,-10,20,20),
-        }
-        redDot.SetParent(tab[i])
 
         local chatTypeText = Text() {
             rect = Rect(0, 0, tab[i].width, tab[i].height),
             text = CustomChat.ChatType[i].name,
             textSize = 11,
             textAlign = 4,
+            anchor = 4, pivot = Point(0.5, 0.5)
             -- font = Constants.FONTS.NotoSansKR
         }
         chatTypeText.shadow.visible = true
         chatTypeText.SetParent(tab[i])
+
+        redDot[i] = Image("Pictures/dot.png") {
+            rect = Rect(0, -3, 8, 8),
+            pivot = Point(0.5, 1),
+            anchor = 1,
+            visible = false,
+            color = Color.red
+        }
+        redDot[i].SetParent(chatTypeText)
     end
 
     local chatScroll = ScrollPanel() {
@@ -98,6 +110,7 @@ function CustomChat.CreateChatPanel()
     CustomChat.chatScroll = chatScroll
     CustomChat.chatTable = vertical
     CustomChat.tabs = tab
+    CustomChat.dots = redDot
 end
 
 function CustomChat.ColorByType(index)
@@ -108,18 +121,35 @@ function CustomChat.AddChat(chat, isString)
     if isString then
         chat = Utility.JSONParse(chat)
     end
-    local index = CustomChat.IndexById[chat.type]
-    if not CustomChat.ChatMessages[index] then
-        CustomChat.ChatMessages[index] = {}
-    end
-    table.insert(CustomChat.ChatMessages[index], { name = chat.name, text = chat.text })
+    local indexByID = CustomChat.IndexById[chat.type]
+    CustomChat.InsertMessage(indexByID, chat)
 
-    if CustomChat.CurrentIndex == index then
-        CustomChat.RefreshCell(index)
+    if CustomChat.CurrentIndex == 1 or CustomChat.CurrentIndex == indexByID then
+        CustomChat.RefreshCell(CustomChat.CurrentIndex)
+    end
+    if CustomChat.CurrentIndex == 1 or CustomChat.CurrentIndex ~= indexByID then
+        CustomChat.HandleRedDot(indexByID, true)
     end
 end
 
+function CustomChat.InsertMessage(index, chat)
+    if not CustomChat.ChatMessages[index] then
+        CustomChat.ChatMessages[index] = {}
+    end
+    if not CustomChat.ChatMessages[1] then
+        CustomChat.ChatMessages[1] = {}
+    end
+    table.insert(CustomChat.ChatMessages[index],
+        { name = chat.name, text = chat.text, color = CustomChat.ColorByType(index) })
+    table.insert(CustomChat.ChatMessages[1],
+        { name = chat.name, text = chat.text, color = CustomChat.ColorByType(index) })
+end
+
 function CustomChat.RefreshCell(index)
+    if CustomChat.dots[index].visible then
+        CustomChat.HandleRedDot(index, false)
+    end
+
     for i, v in pairs(CustomChat.tabs) do
         v.children[1].opacity = i == index and 255 or 120
     end
@@ -138,7 +168,7 @@ function CustomChat.RefreshCell(index)
             textSize = 12,
             lineSpacing = 0.8,
             font = Constants.FONTS.NotoSansKR,
-            color = CustomChat.ColorByType(index)
+            color = chatData.color
         }
         chatCell.shadow.visible = true
         chatCell.SetParent(CustomChat.chatTable)
@@ -161,14 +191,14 @@ function CustomChat.Initialize()
     CustomChat.CreateChatPanel()
     CustomChat.RefreshCell(CustomChat.CurrentIndex)
     CustomChat.AddChat({
-        type = 1,
+        type = Constants.SAYTYPE.SYSTEM,
         name = string.empty,
-        text = "<color=yellow>[#] 현재 버전: v" .. Client.appVersion .. "</color>",
+        text = "[#] 현재 버전: v" .. Client.appVersion
     })
     CustomChat.AddChat({
-        type = 1,
+        type = Constants.SAYTYPE.SYSTEM,
         name = string.empty,
-        text = "<color=yellow>[#] 현재 [" .. Client.platform .. "] 환경에서 접속 중 입니다.</color>",
+        text = "[#] 현재 [" .. Client.platform .. "] 환경에서 접속 중 입니다."
     })
 end
 
@@ -183,6 +213,11 @@ CustomChat.Initialize()
 --     end
 -- end
 
-function CustomChat.HandleRedDot()
-
+function CustomChat.HandleRedDot(index, visible)
+    local targetDot = CustomChat.dots[index]
+    targetDot.visible = visible
+    if not targetDot.visible then
+        targetDot.scaleX, targetDot.scaleY = 0, 0
+        targetDot.DOScale(Point(1, 1), 0.3)
+    end
 end
